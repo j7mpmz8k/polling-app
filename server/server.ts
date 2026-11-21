@@ -37,8 +37,8 @@ if (process.env.NODE_ENV === "production") {
     __dirname,
     "../client/dist/.vite/manifest.json"
   );
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
-  const entries = Object.values(manifest).filter((e) => e.isEntry);
+  const manifest: any = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+  const entries: any[] = Object.values(manifest).filter((e: any) => e.isEntry);
   const jsFiles = entries.map((e) => e.file);
   const cssFiles = [...new Set(entries.flatMap((e) => e.css || []))];
 

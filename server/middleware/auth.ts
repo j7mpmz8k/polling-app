@@ -4,7 +4,7 @@ import { findSession } from "../models/users.js";
 // If a valid session exists, req.user is set to the user object.
 // If no session or invalid session, req.user is left undefined.
 // This middleware runs on every request so routes can check req.user.
-export async function loadUser(req, res, next) {
+export async function loadUser(req: any, res: any, next: any) {
   const sessionId = req.cookies.session_id;
 
   if (!sessionId) {
@@ -30,7 +30,7 @@ export async function loadUser(req, res, next) {
 // Middleware that requires authentication.
 // If req.user is not set, returns a 401 JSON response.
 // Use this on routes that require a logged-in user.
-export function requireAuth(req, res, next) {
+export function requireAuth(req: any, res: any, next: any) {
   if (!req.user) {
     return res.status(401).json({ error: "You must be logged in." });
   }

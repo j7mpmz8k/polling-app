@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     manifest: true,
     rollupOptions: {
-      input: fileURLToPath(new URL("src/main.jsx", import.meta.url)),
+      input: fileURLToPath(new URL("src/main.tsx", import.meta.url)),
     },
   },
 });

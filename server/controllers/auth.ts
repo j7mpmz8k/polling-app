@@ -104,7 +104,7 @@ router.post("/logout", requireAuth, async (req, res) => {
 
 // GET /api/auth/me
 // Returns the currently logged-in user, or null if not logged in.
-router.get("/me", (req, res) => {
+router.get("/me", (req: any, res: any) => {
   if (req.user) {
     res.json({ user: req.user });
   } else {
