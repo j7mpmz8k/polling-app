@@ -4,7 +4,24 @@ import crypto from "crypto";
 
 const SALT_ROUNDS = 10;
 
-export async function createUser(username: string, email: string, password: string) {
+export interface UserRecord {
+  id: number;
+  username: string;
+  email: string;
+  password_hash?: string;
+  created_at: Date;
+}
+
+export interface SessionRecord {
+  id: number;
+  session_id: string;
+  user_id: number;
+  username: string;
+  email: string;
+  created_at: Date;
+}
+
+export async function createUser(username: string, email: string, password: string): Promise<UserRecord> {
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
   const result = await pool.query(
     "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email, created_at",
@@ -13,21 +30,21 @@ export async function createUser(username: string, email: string, password: stri
   return result.rows[0];
 }
 
-export async function findByUsername(username: string) {
+export async function findByUsername(username: string): Promise<UserRecord | null> {
   const result = await pool.query("SELECT * FROM users WHERE username = $1", [
     username,
   ]);
   return result.rows[0] || null;
 }
 
-export async function findByEmail(email: string) {
+export async function findByEmail(email: string): Promise<UserRecord | null> {
   const result = await pool.query("SELECT * FROM users WHERE email = $1", [
     email,
   ]);
   return result.rows[0] || null;
 }
 
-export async function findById(id: number) {
+export async function findById(id: number): Promise<UserRecord | null> {
   const result = await pool.query(
     "SELECT id, username, email, created_at FROM users WHERE id = $1",
     [id]
@@ -35,11 +52,11 @@ export async function findById(id: number) {
   return result.rows[0] || null;
 }
 
-export async function verifyPassword(password: string, passwordHash: string) {
+export async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
   return bcrypt.compare(password, passwordHash);
 }
 
-export async function createSession(userId: number) {
+export async function createSession(userId: number): Promise<string> {
   const sessionId = crypto.randomUUID();
   await pool.query(
     "INSERT INTO sessions (session_id, user_id) VALUES ($1, $2)",
@@ -48,7 +65,7 @@ export async function createSession(userId: number) {
   return sessionId;
 }
 
-export async function findSession(sessionId: string) {
+export async function findSession(sessionId: string): Promise<SessionRecord | null> {
   const result = await pool.query(
     `SELECT sessions.*, users.id AS user_id, users.username, users.email
      FROM sessions
@@ -59,6 +76,6 @@ export async function findSession(sessionId: string) {
   return result.rows[0] || null;
 }
 
-export async function deleteSession(sessionId: string) {
+export async function deleteSession(sessionId: string): Promise<void> {
   await pool.query("DELETE FROM sessions WHERE session_id = $1", [sessionId]);
 }

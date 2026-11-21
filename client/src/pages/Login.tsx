@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, SubmitEvent } from "react";
 import { useNavigate, Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 
@@ -15,7 +15,7 @@ function Login() {
     return null;
   }
 
-  async function handleSubmit(e: any) {
+  async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     setError("");
 

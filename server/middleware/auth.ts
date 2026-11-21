@@ -1,10 +1,15 @@
-import { findSession } from "../models/users.js";
+import { Request, Response, NextFunction } from "express";
+import { findSession, UserRecord } from "../models/users.js";
+
+export interface AuthRequest extends Request {
+  user?: UserRecord;
+}
 
 // Middleware that loads the current user from the session cookie.
 // If a valid session exists, req.user is set to the user object.
 // If no session or invalid session, req.user is left undefined.
 // This middleware runs on every request so routes can check req.user.
-export async function loadUser(req: any, res: any, next: any) {
+export async function loadUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
   const sessionId = req.cookies.session_id;
 
   if (!sessionId) {
@@ -18,6 +23,7 @@ export async function loadUser(req: any, res: any, next: any) {
         id: session.user_id,
         username: session.username,
         email: session.email,
+        created_at: session.created_at,
       };
     }
   } catch (err) {
@@ -30,9 +36,10 @@ export async function loadUser(req: any, res: any, next: any) {
 // Middleware that requires authentication.
 // If req.user is not set, returns a 401 JSON response.
 // Use this on routes that require a logged-in user.
-export function requireAuth(req: any, res: any, next: any) {
+export function requireAuth(req: AuthRequest, res: Response, next: NextFunction): void {
   if (!req.user) {
-    return res.status(401).json({ error: "You must be logged in." });
+    res.status(401).json({ error: "You must be logged in." });
+    return;
   }
   next();
 }

@@ -1,9 +1,29 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, ReactNode } from "react";
 
-export const AuthContext = createContext(null as any);
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+}
 
-export function AuthProvider({ children }: { children: any }) {
-  const [user, setUser] = useState(null);
+export interface AuthContextValue {
+  user: User | null;
+  setUser: (user: User | null) => void;
+  loading: boolean;
+  redirectUrl: string;
+  setRedirectUrl: (url: string) => void;
+}
+
+export const AuthContext = createContext<AuthContextValue>({
+  user: null,
+  setUser: () => {},
+  loading: true,
+  redirectUrl: "/",
+  setRedirectUrl: () => {},
+});
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [redirectUrl, setRedirectUrl] = useState("/");
 

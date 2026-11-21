@@ -7,7 +7,7 @@ import {
   createSession,
   deleteSession,
 } from "../models/users.js";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, AuthRequest } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -67,7 +67,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password." });
     }
 
-    const valid = await verifyPassword(password, user.password_hash);
+    const valid = await verifyPassword(password, user.password_hash || "");
     if (!valid) {
       return res.status(401).json({ error: "Invalid username or password." });
     }
@@ -104,7 +104,7 @@ router.post("/logout", requireAuth, async (req, res) => {
 
 // GET /api/auth/me
 // Returns the currently logged-in user, or null if not logged in.
-router.get("/me", (req: any, res: any) => {
+router.get("/me", (req: AuthRequest, res) => {
   if (req.user) {
     res.json({ user: req.user });
   } else {

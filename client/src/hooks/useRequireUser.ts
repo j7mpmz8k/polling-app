@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useAuth } from "./useAuth";
+import { User } from "../contexts/AuthContext";
 
-export function useRequireUser() {
+export function useRequireUser(): User | null {
   const { user, loading, setRedirectUrl } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
