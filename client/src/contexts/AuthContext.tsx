@@ -2,7 +2,7 @@ import { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext(null as any);
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children }: { children: any }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [redirectUrl, setRedirectUrl] = useState("/");

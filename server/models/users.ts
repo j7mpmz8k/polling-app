@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 const SALT_ROUNDS = 10;
 
-export async function createUser(username, email, password) {
+export async function createUser(username: string, email: string, password: string) {
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
   const result = await pool.query(
     "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email, created_at",
@@ -13,21 +13,21 @@ export async function createUser(username, email, password) {
   return result.rows[0];
 }
 
-export async function findByUsername(username) {
+export async function findByUsername(username: string) {
   const result = await pool.query("SELECT * FROM users WHERE username = $1", [
     username,
   ]);
   return result.rows[0] || null;
 }
 
-export async function findByEmail(email) {
+export async function findByEmail(email: string) {
   const result = await pool.query("SELECT * FROM users WHERE email = $1", [
     email,
   ]);
   return result.rows[0] || null;
 }
 
-export async function findById(id) {
+export async function findById(id: number) {
   const result = await pool.query(
     "SELECT id, username, email, created_at FROM users WHERE id = $1",
     [id]
@@ -35,11 +35,11 @@ export async function findById(id) {
   return result.rows[0] || null;
 }
 
-export async function verifyPassword(password, passwordHash) {
+export async function verifyPassword(password: string, passwordHash: string) {
   return bcrypt.compare(password, passwordHash);
 }
 
-export async function createSession(userId) {
+export async function createSession(userId: number) {
   const sessionId = crypto.randomUUID();
   await pool.query(
     "INSERT INTO sessions (session_id, user_id) VALUES ($1, $2)",
@@ -48,7 +48,7 @@ export async function createSession(userId) {
   return sessionId;
 }
 
-export async function findSession(sessionId) {
+export async function findSession(sessionId: string) {
   const result = await pool.query(
     `SELECT sessions.*, users.id AS user_id, users.username, users.email
      FROM sessions
@@ -59,6 +59,6 @@ export async function findSession(sessionId) {
   return result.rows[0] || null;
 }
 
-export async function deleteSession(sessionId) {
+export async function deleteSession(sessionId: string) {
   await pool.query("DELETE FROM sessions WHERE session_id = $1", [sessionId]);
 }

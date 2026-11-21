@@ -49,7 +49,7 @@ async function migrate() {
         );
         await client.query("COMMIT");
         console.log(`Applied: ${file}`);
-      } catch (err) {
+      } catch (err: any) {
         await client.query("ROLLBACK");
         console.error(`Failed to apply ${file}:`, err.message);
         process.exit(1);
